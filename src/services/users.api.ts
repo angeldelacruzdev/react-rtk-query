@@ -11,6 +11,10 @@ export const usersApi = createApi({
         method: "POST",
         body,
       }),
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      transformErrorResponse(response){
+        console.log(response)
+      }
     }),
   }),
 });
