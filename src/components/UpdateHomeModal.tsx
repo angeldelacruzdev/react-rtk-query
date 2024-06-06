@@ -13,6 +13,7 @@ import Button from "@mui/material/Button";
 
 import { useGetUserQuery, useUpdateUserMutation } from "../services/users.api";
 import { SubmitHandler, Controller, useForm } from "react-hook-form";
+import { useEffect } from "react";
 type Props = {
   open: boolean;
   id: number | null;
@@ -47,7 +48,9 @@ export const UpdateHomeModal = ({ open = false, id, handleClose }: Props) => {
     data: user,
     isLoading,
     isSuccess,
+    isUninitialized,
   } = useGetUserQuery(id, { skip: !id, refetchOnMountOrArgChange: true });
+
   const [updateUser, { error }] = useUpdateUserMutation();
 
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
@@ -58,17 +61,15 @@ export const UpdateHomeModal = ({ open = false, id, handleClose }: Props) => {
     }
   };
 
+  useEffect(() => {
+    if (isSuccess && user) {
+      Object.keys(user).forEach((key) => {
+        setValue(key, user[key]);
+      });
+    }
+  }, [isSuccess, user, setValue]);
+
   if (isLoading) return <>Is loading...</>;
-
-  if (isSuccess) {
-    Object.keys(user).forEach((key) => {
-      setValue(key, user[key]);
-    });
-  }
-
-  if (error) {
-    open = false;
-  }
 
   return (
     <>
