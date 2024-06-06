@@ -2,8 +2,18 @@ import { Box, Button, Container } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import React from "react";
 import { HomeModal } from "../components/HomeModal";
+import { useGetUsersQuery } from "../services/users.api";
+import { ListUsers } from "../components/ListUsers";
 
 const HomePage = () => {
+  const {
+    data: users,
+    error,
+    isLoading,
+    isFetching,
+    isError,
+  } = useGetUsersQuery({});
+
   const [open, setOpen] = React.useState(false);
 
   const handleClickOpen = () => {
@@ -12,6 +22,9 @@ const HomePage = () => {
   const handleClose = () => {
     setOpen(false);
   };
+
+  if (isLoading || isFetching) return <div>Is Loading</div>;
+  if (isError) return <div>Error Ocurred: {JSON.stringify(error)}</div>;
 
   return (
     <Container maxWidth="lg" className="bg-gray-500">
@@ -34,6 +47,7 @@ const HomePage = () => {
           </Grid>
         </Grid>
       </Box>
+      <ListUsers users={users} />
     </Container>
   );
 };

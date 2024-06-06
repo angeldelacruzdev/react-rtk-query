@@ -10,12 +10,20 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
-import { useState } from "react";
-import { useNewUserMutation } from "../services/users.api";
+
+import { useGetUserQuery, useUpdateUserMutation } from "../services/users.api";
+import { SubmitHandler, Controller, useForm } from "react-hook-form";
 type Props = {
   open: boolean;
+  id: number | null;
 
   handleClose: () => void;
+};
+
+type Inputs = {
+  firstName: string;
+  lastName: string;
+  isActive: boolean;
 };
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
@@ -27,28 +35,41 @@ const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-export const HomeModal = ({ open = false, handleClose }: Props) => {
-  const [addNewUser] = useNewUserMutation();
+export const UpdateHomeModal = ({ open = false, id, handleClose }: Props) => {
+  const { register, handleSubmit, control, setValue, reset } = useForm<Inputs>({
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      isActive: false,
+    },
+  });
+  const {
+    data: user,
+    isLoading,
+    isSuccess,
+  } = useGetUserQuery(id, { skip: !id, refetchOnMountOrArgChange: true });
+  const [updateUser, { error }] = useUpdateUserMutation();
 
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [isActive, setIsActive] = useState(true);
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleSubmit = async (event: any) => {
-    event.preventDefault();
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
-      const payload = await addNewUser({
-        firstName,
-        lastName,
-        isActive,
-      }).unwrap();
-
-      console.log(payload);
+      if (id) await updateUser({ id, ...data }).then(() => reset());
     } catch (error) {
       console.log(error);
     }
   };
+
+  if (isLoading) return <>Is loading...</>;
+
+  if (isSuccess) {
+    Object.keys(user).forEach((key) => {
+      setValue(key, user[key]);
+    });
+  }
+
+  if (error) {
+    open = false;
+  }
+
   return (
     <>
       <BootstrapDialog
@@ -73,30 +94,31 @@ export const HomeModal = ({ open = false, handleClose }: Props) => {
           <CloseIcon />
         </IconButton>
         <DialogContent dividers>
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <TextField
               id="firstName"
               label="Nombre"
               variant="outlined"
-              value={firstName}
-              onChange={(event) => setFirstName(event.target.value)}
+              {...register("firstName")}
             />
             <TextField
               id="lastName"
               label="Apellido"
               variant="outlined"
-              value={lastName}
-              onChange={(event) => setLastName(event.target.value)}
+              {...register("lastName")}
             />
-            <Checkbox
-              id="isActive"
-              checked={isActive}
-              onChange={(event) => setIsActive(event.target.checked)}
+
+            <Controller
+              name="isActive"
+              control={control}
+              rules={{ required: true }}
+              render={({ field }) => <Checkbox {...field} />}
             />
             <Button type="submit" variant="contained">
               Enviar
             </Button>
           </form>
+          {JSON.stringify(error)}
         </DialogContent>
       </BootstrapDialog>
     </>
