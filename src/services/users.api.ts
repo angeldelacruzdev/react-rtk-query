@@ -34,7 +34,7 @@ export const usersApi = createApi({
         return error.data;
       },
     }),
-    getUser: builder.query<ResponseUserDto, Partial<ResponseUserDto>>({
+    getUser: builder.query({
       query: (id) => `/users/${id}`,
       transformErrorResponse(error) {
         console.log(error);

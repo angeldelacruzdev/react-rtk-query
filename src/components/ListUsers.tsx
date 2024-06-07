@@ -4,7 +4,7 @@ import { useDeleteUserMutation } from "../services/users.api";
 import { UpdateHomeModal } from "./UpdateHomeModal";
 
 type props = {
-  users: ResponseUserDto[] | undefined;
+  users: ResponseUserDto[];
 };
 
 export const ListUsers = ({ users }: props) => {

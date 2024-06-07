@@ -17,7 +17,6 @@ import { useEffect } from "react";
 type Props = {
   open: boolean;
   id: number | null;
-
   handleClose: () => void;
 };
 
@@ -48,7 +47,6 @@ export const UpdateHomeModal = ({ open = false, id, handleClose }: Props) => {
     data: user,
     isLoading,
     isSuccess,
-    isUninitialized,
   } = useGetUserQuery(id, { skip: !id, refetchOnMountOrArgChange: true });
 
   const [updateUser, { error }] = useUpdateUserMutation();
@@ -63,7 +61,7 @@ export const UpdateHomeModal = ({ open = false, id, handleClose }: Props) => {
 
   useEffect(() => {
     if (isSuccess && user) {
-      Object.keys(user).forEach((key) => {
+      (Object.keys(user) as Array<keyof Inputs>).forEach((key) => {
         setValue(key, user[key]);
       });
     }
