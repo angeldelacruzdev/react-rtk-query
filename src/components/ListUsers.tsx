@@ -4,10 +4,10 @@ import { useDeleteUserMutation } from "../services/users.api";
 import { UpdateHomeModal } from "./UpdateHomeModal";
 
 type props = {
-  users: ResponseUserDto[];
+  users: ResponseUserDto[] | undefined;
 };
 
-export const ListUsers = ({ users }: props) => {
+export const ReListUsers = React.memo(({ users }: props) => {
   const [deleteUser] = useDeleteUserMutation();
 
   const [open, setOpen] = React.useState(false);
@@ -22,23 +22,30 @@ export const ListUsers = ({ users }: props) => {
     setOpen(false);
   };
 
+  console.log(users)
+
   return (
     <>
-      <ul>
-        {users?.map((user) => (
-          <li key={user.id}>
-            {user.firstName} - {user.lastName}
-            <button onClick={() => deleteUser(user.id)}>"Delete"</button>
-            <button
-              className="bg-red-100"
-              onClick={() => handleOpenModal(user.id)}
-            >
-              Update
-            </button>
-          </li>
-        ))}
-      </ul>
-      <UpdateHomeModal open={open} id={userId} handleClose={handleClose} />
+      {users && (
+        <ul>
+          {users?.map((user) => (
+            <li key={user.id}>
+              {user.firstName} - {user.lastName}
+              <button onClick={() => deleteUser(user.id)}>"Delete"</button>
+              <button
+                className="bg-red-100"
+                onClick={() => handleOpenModal(user.id)}
+              >
+                Update
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {userId && (
+        <UpdateHomeModal open={open} id={userId} handleClose={handleClose} />
+      )}
     </>
   );
-};
+});

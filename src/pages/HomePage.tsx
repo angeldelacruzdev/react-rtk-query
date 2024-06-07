@@ -1,9 +1,10 @@
+import React from "react";
 import { Box, Button, Container } from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
-import React from "react";
+
 import { HomeModal } from "../components/HomeModal";
 import { useGetUsersQuery } from "../services/users.api";
-import { ListUsers } from "../components/ListUsers";
+import { ReListUsers } from "../components/ListUsers";
 
 const HomePage = () => {
   const {
@@ -11,6 +12,7 @@ const HomePage = () => {
     error,
     isLoading,
     isFetching,
+
     isError,
   } = useGetUsersQuery({});
 
@@ -24,10 +26,10 @@ const HomePage = () => {
   };
 
   if (isLoading || isFetching) return <div>Is Loading</div>;
-  if (isError) return <div>Error Ocurred: {JSON.stringify(error)}</div>;
 
   return (
     <Container maxWidth="lg" className="bg-gray-500">
+      {isError && <div>Error Ocurred: {JSON.stringify(error)}</div>}
       <Box component={"section"} className="bg-gray-700">
         <Grid container spacing={2}>
           <Grid xs={8}>
@@ -47,7 +49,7 @@ const HomePage = () => {
           </Grid>
         </Grid>
       </Box>
-      <ListUsers users={users} />
+      {users && <ReListUsers users={users} />}
     </Container>
   );
 };

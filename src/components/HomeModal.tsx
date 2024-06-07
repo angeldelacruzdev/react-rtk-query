@@ -10,7 +10,7 @@ import CloseIcon from "@mui/icons-material/Close";
 
 import Checkbox from "@mui/material/Checkbox";
 import Button from "@mui/material/Button";
-import { useState } from "react";
+import React, { useState } from "react";
 import { useNewUserMutation } from "../services/users.api";
 type Props = {
   open: boolean;

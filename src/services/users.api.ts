@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { ResponseUserDto } from "./dto/response-users.dto";
 
@@ -7,6 +8,7 @@ export const usersApi = createApi({
     baseUrl: "http://localhost:3000",
     prepareHeaders: () => {},
   }),
+  keepUnusedDataFor: 60,
   tagTypes: ["Users"],
   endpoints: (builder) => ({
     newUser: builder.mutation<ResponseUserDto, Partial<ResponseUserDto>>({
@@ -16,7 +18,6 @@ export const usersApi = createApi({
         body,
       }),
       invalidatesTags: [{ type: "Users", id: "LIST" }],
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       transformErrorResponse(response) {
         console.log(response);
       },
@@ -30,6 +31,7 @@ export const usersApi = createApi({
               { type: "Users", id: "LIST" },
             ]
           : [{ type: "Users", id: "LIST" }],
+
       transformErrorResponse(error) {
         return error.data;
       },
@@ -47,7 +49,7 @@ export const usersApi = createApi({
           method: "DELETE",
         };
       },
-      invalidatesTags: (result, error, id) => [{ type: "Users", id }],
+      invalidatesTags: (_result, _error, id) => [{ type: "Users", id }],
       transformErrorResponse(error) {
         console.log(error);
       },
@@ -61,7 +63,7 @@ export const usersApi = createApi({
         method: "PUT",
         body,
       }),
-      invalidatesTags: (result, error, { id }) => [{ type: "Users", id }],
+      invalidatesTags: (_result, _error, { id }) => [{ type: "Users", id }],
       transformErrorResponse(error) {
         return error;
       },
