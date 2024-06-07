@@ -1,28 +1,25 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import { ResponseUserDto } from "./dto/response-users.dto";
+import { axiosBaseQuery } from "../axiosBaseQuery";
 
 export const usersApi = createApi({
   reducerPath: "usersApi",
-  baseQuery: fetchBaseQuery({
+  baseQuery: axiosBaseQuery({
     baseUrl: "http://localhost:3000",
-    prepareHeaders: () => {},
   }),
   tagTypes: ["Users"],
   endpoints: (builder) => ({
     newUser: builder.mutation<ResponseUserDto, Partial<ResponseUserDto>>({
       query: (body) => ({
-        url: "users",
+        url: "/users",
         method: "POST",
-        body,
+        data: body,
       }),
       invalidatesTags: [{ type: "Users", id: "LIST" }],
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      transformErrorResponse(response) {
-        console.log(response);
-      },
     }),
     getUsers: builder.query<ResponseUserDto[], Partial<ResponseUserDto>>({
-      query: () => "/users",
+      query: () => ({ url: "/users" }),
       providesTags: (result) =>
         result
           ? [
@@ -30,15 +27,9 @@ export const usersApi = createApi({
               { type: "Users", id: "LIST" },
             ]
           : [{ type: "Users", id: "LIST" }],
-      transformErrorResponse(error) {
-        return error.data;
-      },
     }),
     getUser: builder.query({
-      query: (id) => `/users/${id}`,
-      transformErrorResponse(error) {
-        console.log(error);
-      },
+      query: (id) => ({ url: `/users/${id}` }),
     }),
     deleteUser: builder.mutation<{ success: boolean }, number>({
       query(id) {
@@ -48,9 +39,6 @@ export const usersApi = createApi({
         };
       },
       invalidatesTags: (result, error, id) => [{ type: "Users", id }],
-      transformErrorResponse(error) {
-        console.log(error);
-      },
     }),
     updateUser: builder.mutation<
       ResponseUserDto,
@@ -59,12 +47,9 @@ export const usersApi = createApi({
       query: ({ id, ...body }) => ({
         url: `/users/${id}`,
         method: "PUT",
-        body,
+        data: body,
       }),
       invalidatesTags: (result, error, { id }) => [{ type: "Users", id }],
-      transformErrorResponse(error) {
-        return error;
-      },
     }),
   }),
 });
