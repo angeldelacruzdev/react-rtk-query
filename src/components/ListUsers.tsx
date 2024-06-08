@@ -22,8 +22,6 @@ export const ReListUsers = React.memo(({ users }: props) => {
     setOpen(false);
   };
 
-  console.log(users)
-
   return (
     <>
       {users && (

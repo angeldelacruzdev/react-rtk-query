@@ -52,7 +52,7 @@ export const UpdateHomeModal = memo(
       isSuccess,
     } = useGetUserQuery(id, { skip: !id, refetchOnMountOrArgChange: true });
 
-    const [updateUser, { error }] = useUpdateUserMutation();
+    const [updateUser, { error: catchError }] = useUpdateUserMutation();
 
     const onSubmit: SubmitHandler<Inputs> = async (data) => {
       try {
@@ -127,7 +127,7 @@ export const UpdateHomeModal = memo(
                   Enviar
                 </Button>
               </form>
-              {JSON.stringify(error)}
+              {JSON.stringify(catchError)}
             </DialogContent>
           </BootstrapDialog>
         )}
